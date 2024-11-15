@@ -4,8 +4,7 @@ LDFLAGS = -shared
 VPATH = src
 
 TARGET_LIB = libmalloc.so
-OBJS = malloc.o
-BIN = main
+OBJS = malloc.o utils.o
 
 all: library
 
@@ -21,6 +20,5 @@ check:
 clean:
 	$(RM) $(TARGET_LIB)
 	$(RM) $(OBJS)
-	$(RM) $(BIN)
 
 .PHONY: all $(TARGET_LIB) clean

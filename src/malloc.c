@@ -6,33 +6,9 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
+#include "utils.h"
+
 void *head = NULL;
-
-static size_t align(size_t size)
-{
-    size_t max = sizeof(long double);
-    size_t r = size % max;
-
-    size_t padding = 0;
-    if (r != 0)
-        padding = max - r;
-
-    size_t res;
-    if (__builtin_add_overflow(size, padding, &res))
-        return 0;
-
-    return res;
-}
-
-static size_t round_up(size_t page_syze, size_t size)
-{
-    size_t i = 1;
-    while ((page_syze * i) < size)
-    {
-        i++;
-    }
-    return page_syze * i;
-}
 
 static struct blk_meta *request_space(struct blk_meta *last, size_t size)
 {
@@ -40,7 +16,6 @@ static struct blk_meta *request_space(struct blk_meta *last, size_t size)
     size_t align_struct = align(sizeof(struct blk_meta));
     size_t total_size = size + align_struct;
 
-    /* create new page if no page exists or if current page full */
     size_t chunk_size = round_up(page_size, total_size);
     struct blk_meta *block = mmap(NULL, chunk_size, PROT_READ | PROT_WRITE,
                                   MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
@@ -211,20 +186,6 @@ __attribute__((visibility("default"))) void *realloc(void *ptr, size_t size)
 {
     char *c_ptr = ptr;
     return c_ptr + size;
-}
-
-static void *beware_overflow(void *ptr, size_t nmemb, size_t size)
-{
-    size_t res;
-    if (__builtin_mul_overflow(size, nmemb, &res))
-    {
-        return NULL;
-    }
-
-    char *tmp = ptr;
-    tmp += res;
-
-    return tmp;
 }
 
 __attribute__((visibility("default"))) void *calloc(size_t nmemb, size_t size)
