@@ -188,7 +188,7 @@ __attribute__((visibility("default"))) void *realloc(void *ptr, size_t size)
     return c_ptr + size;
 }
 
-__attribute__((visibility("default"))) void *calloc(size_t nmemb, size_t size)
+void *my_calloc(size_t nmemb, size_t size)
 {
     if (size == 0 || nmemb == 0)
         return NULL;
@@ -205,4 +205,9 @@ __attribute__((visibility("default"))) void *calloc(size_t nmemb, size_t size)
     }
 
     return ptr;
+}
+
+__attribute__((visibility("default"))) void *calloc(size_t nmemb, size_t size)
+{
+    return my_calloc(nmemb,size);
 }
