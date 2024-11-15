@@ -15,10 +15,6 @@ $(TARGET_LIB): LDFLAGS += -Wl,--no-undefined
 $(TARGET_LIB): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $^
 
-debug: CFLAGS += -g
-debug: $(OBJS)
-	$(CC) $(CFLAGS) -o $(BIN) $^
-
 check:
 	./tests/test_malloc.sh
 
